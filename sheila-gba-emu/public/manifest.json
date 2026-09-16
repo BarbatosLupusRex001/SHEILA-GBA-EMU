@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "SHEILA GBA EMU",
+  "short_name": "SHEILA GBA",
+  "description": "High-Performance Game Boy Advance Emulator with custom controls, save states, cheats, and AI assistant.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#090b10",
+  "background_color": "#090b10",
+  "categories": ["games", "entertainment", "utilities"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

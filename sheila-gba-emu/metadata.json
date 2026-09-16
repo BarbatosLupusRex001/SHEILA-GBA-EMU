@@ -1,0 +1,6 @@
+{
+  "name": "SHEILA GBA EMU",
+  "description": "High-performance Game Boy Advance emulator featuring ROM management, customizable controls, save states, cheat codes, and SHEILA AI assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
