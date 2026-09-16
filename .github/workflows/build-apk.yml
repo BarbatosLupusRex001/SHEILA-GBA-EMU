@@ -9,10 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout SHEILA GBA EMU
         uses: actions/checkout@v4
 
-      - name: Extract Project Zip (if present)
+      - name: Extract Project Zip (if uploaded as zip)
         run: |
           if ls *.zip 1> /dev/null 2>&1; then
             echo "Found zip file, extracting..."
@@ -28,21 +28,26 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build Android APK
+      - name: Install Android NDK & CMake
         run: |
-          # Find where the Android project root is
-          if [ -f "gradlew" ]; then
-            chmod +x gradlew
-            ./gradlew assembleDebug --stacktrace
-          elif [ -f "android/gradlew" ]; then
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125" "cmake;3.22.1"
+
+      - name: Setup Gradle 8.5
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.5'
+
+      - name: Build Android Debug APK
+        run: |
+          # Detect project directory
+          if [ -f "android/settings.gradle.kts" ]; then
             cd android
-            chmod +x gradlew
-            ./gradlew assembleDebug --stacktrace
-          else
-            # Install gradle and build if gradlew wasn't included
-            sudo apt-get update && sudo apt-get install -y gradle
-            gradle assembleDebug --stacktrace
+          elif [ -f "android/build.gradle.kts" ]; then
+            cd android
           fi
+
+          echo "Running Gradle in $(pwd)"
+          gradle assembleDebug --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
