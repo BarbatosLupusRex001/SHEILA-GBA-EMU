@@ -1,0 +1,52 @@
+name: Build SHEILA GBA EMU APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract Project Zip (if present)
+        run: |
+          if ls *.zip 1> /dev/null 2>&1; then
+            echo "Found zip file, extracting..."
+            unzip -o *.zip
+          fi
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build Android APK
+        run: |
+          # Find where the Android project root is
+          if [ -f "gradlew" ]; then
+            chmod +x gradlew
+            ./gradlew assembleDebug --stacktrace
+          elif [ -f "android/gradlew" ]; then
+            cd android
+            chmod +x gradlew
+            ./gradlew assembleDebug --stacktrace
+          else
+            # Install gradle and build if gradlew wasn't included
+            sudo apt-get update && sudo apt-get install -y gradle
+            gradle assembleDebug --stacktrace
+          fi
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SHEILA-GBA-EMU-debug-apk
+          path: |
+            **/build/outputs/apk/**/*.apk
